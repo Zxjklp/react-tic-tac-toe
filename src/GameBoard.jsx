@@ -1,12 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
 
-export default function GameBoard({ selectedMark, onQuit }) {
+export default function GameBoard({ selectedMark, gameMode, onQuit }) {
   const [board, setBoard] = useState(Array(9).fill(null));
   const [currentPlayer, setCurrentPlayer] = useState("x"); // X always starts first
   const [isGameActive, setIsGameActive] = useState(true);
   const [winner, setWinner] = useState(null);
   const [winningLine, setWinningLine] = useState([]);
   const [scores, setScores] = useState({ x: 0, o: 0, ties: 0 });
+  const [showRestartModal, setShowRestartModal] = useState(false);
 
   const checkWinner = useCallback((boardState) => {
     const winningPatterns = [
@@ -37,14 +38,11 @@ export default function GameBoard({ selectedMark, onQuit }) {
   }, []);
 
   const handleCellClick = (index) => {
-    // Only allow player moves when it's their turn
-    if (
-      board[index] ||
-      !isGameActive ||
-      winner ||
-      currentPlayer !== selectedMark
-    )
-      return;
+    // Basic validation - same for both modes
+    if (board[index] || !isGameActive || winner) return;
+
+    // In CPU mode, only allow moves when it's the player's turn
+    if (gameMode === "cpu" && currentPlayer !== selectedMark) return;
 
     const newBoard = [...board];
     newBoard[index] = currentPlayer;
@@ -79,8 +77,24 @@ export default function GameBoard({ selectedMark, onQuit }) {
     setWinningLine([]);
   };
 
+  const handleRestartClick = () => {
+    setShowRestartModal(true);
+  };
+
+  const handleRestartConfirm = () => {
+    setShowRestartModal(false);
+    onQuit(); // Go back to starting screen
+  };
+
+  const handleRestartCancel = () => {
+    setShowRestartModal(false);
+  };
+
   // CPU turn effect
   useEffect(() => {
+    // Only run CPU logic in CPU mode
+    if (gameMode !== "cpu") return;
+
     const cpuMark = selectedMark === "x" ? "o" : "x";
 
     if (currentPlayer === cpuMark && isGameActive && !winner) {
@@ -164,7 +178,15 @@ export default function GameBoard({ selectedMark, onQuit }) {
 
       return () => clearTimeout(timer);
     }
-  }, [currentPlayer, board, isGameActive, winner, selectedMark, checkWinner]);
+  }, [
+    currentPlayer,
+    board,
+    isGameActive,
+    winner,
+    selectedMark,
+    gameMode,
+    checkWinner,
+  ]);
 
   const renderCellContent = (cellValue, isWinning = false) => {
     if (!cellValue) return null;
@@ -178,8 +200,7 @@ export default function GameBoard({ selectedMark, onQuit }) {
     if (cellValue === "x") {
       return (
         <svg
-          width='40'
-          height='40'
+          className='w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10'
           viewBox='0 0 64 64'
           xmlns='http://www.w3.org/2000/svg'
         >
@@ -193,8 +214,7 @@ export default function GameBoard({ selectedMark, onQuit }) {
     } else {
       return (
         <svg
-          width='40'
-          height='40'
+          className='w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10'
           viewBox='0 0 64 64'
           xmlns='http://www.w3.org/2000/svg'
         >
@@ -208,23 +228,21 @@ export default function GameBoard({ selectedMark, onQuit }) {
   };
 
   return (
-    <div className='w-full max-w-[460px] mx-auto flex flex-col items-center gap-6 relative'>
+    <div className='w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-[460px] mx-auto flex flex-col items-center gap-4 sm:gap-6 relative'>
       {/* Header row */}
-      <div className='grid grid-cols-3 w-full mb-4 items-center'>
+      <div className='grid grid-cols-3 w-full mb-2 sm:mb-4 items-center'>
         <div className='flex justify-start'>
           <img
             src='/src/assets/logo.svg'
             alt='Tic-tac-toe game logo featuring X and O symbols in a playful design'
-            width={72}
-            height={32}
+            className='w-12 h-5 sm:w-16 md:w-18 lg:w-[72px] lg:h-8'
           />
         </div>
         <div className='flex justify-center'>
-          <div className='bg-[#1f3641] rounded-lg flex items-center justify-center text-[#a8bfc9] font-bold shadow-[0_4px_0_#10212a] gap-2 w-full max-w-[140px] h-12'>
+          <div className='bg-[#1f3641] rounded-lg flex items-center justify-center text-[#a8bfc9] font-bold shadow-[0_4px_0_#10212a] gap-1 sm:gap-2 w-full max-w-[100px] sm:max-w-[120px] lg:max-w-[140px] h-10 sm:h-12 text-xs sm:text-sm lg:text-base'>
             {currentPlayer === "x" ? (
               <svg
-                width='24'
-                height='24'
+                className='w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6'
                 viewBox='0 0 64 64'
                 xmlns='http://www.w3.org/2000/svg'
               >
@@ -236,8 +254,7 @@ export default function GameBoard({ selectedMark, onQuit }) {
               </svg>
             ) : (
               <svg
-                width='24'
-                height='24'
+                className='w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6'
                 viewBox='0 0 64 64'
                 xmlns='http://www.w3.org/2000/svg'
               >
@@ -252,10 +269,14 @@ export default function GameBoard({ selectedMark, onQuit }) {
         </div>
         <div className='flex justify-end'>
           <button
-            className='bg-[#a8bfc9] rounded-lg p-2.5 flex items-center justify-center cursor-pointer shadow-[0_4px_0_#6d8b99] hover:bg-[#c5d2dc] transition-colors'
-            onClick={onQuit}
+            className='bg-[#a8bfc9] rounded-lg p-2 sm:p-2.5 flex items-center justify-center cursor-pointer shadow-[0_4px_0_#6d8b99] hover:bg-[#c5d2dc] transition-colors'
+            onClick={handleRestartClick}
           >
-            <svg width='20' height='20' xmlns='http://www.w3.org/2000/svg'>
+            <svg
+              className='w-4 h-4 sm:w-5 sm:h-5'
+              xmlns='http://www.w3.org/2000/svg'
+              viewBox='0 0 20 20'
+            >
               <path
                 d='M19.524 0h-1.88a.476.476 0 0 0-.476.499l.159 3.284A9.81 9.81 0 0 0 9.835.317C4.415.317-.004 4.743 0 10.167.004 15.597 4.406 20 9.835 20a9.796 9.796 0 0 0 6.59-2.536.476.476 0 0 0 .019-.692l-1.348-1.349a.476.476 0 0 0-.65-.022 6.976 6.976 0 0 1-9.85-.63 6.987 6.987 0 0 1 .63-9.857 6.976 6.976 0 0 1 10.403 1.348l-4.027-.193a.476.476 0 0 0-.498.476v1.881c0 .263.213.476.476.476h7.944A.476.476 0 0 0 20 8.426V.476A.476.476 0 0 0 19.524 0Z'
                 fill='#1F3641'
@@ -265,7 +286,7 @@ export default function GameBoard({ selectedMark, onQuit }) {
         </div>
       </div>
       {/* Game grid */}
-      <div className='grid grid-cols-3 gap-4 w-full'>
+      <div className='grid grid-cols-3 gap-3 sm:gap-4 w-full'>
         {board.map((cellValue, i) => {
           const isWinningCell = winningLine.includes(i);
           const winningCellBg =
@@ -289,45 +310,91 @@ export default function GameBoard({ selectedMark, onQuit }) {
         })}
       </div>
       {/* Score row */}
-      <div className='flex w-full gap-4 mt-6'>
-        <div className='flex-1 bg-[#31c3bd] rounded-xl py-2 text-center text-[#1a2a33] font-bold'>
-          {selectedMark === "x" ? "X (YOU)" : "X (CPU)"}
-          <div className='text-2xl'>{scores.x}</div>
+      <div className='flex w-full gap-2 sm:gap-4 mt-4 sm:mt-6'>
+        <div className='flex-1 bg-[#31c3bd] rounded-lg sm:rounded-xl py-2 sm:py-3 text-center text-[#1a2a33] font-bold text-xs sm:text-sm md:text-base'>
+          {gameMode === "player"
+            ? selectedMark === "x"
+              ? "X (P1)"
+              : "X (P2)"
+            : selectedMark === "x"
+            ? "X (YOU)"
+            : "X (CPU)"}
+          <div className='text-lg sm:text-xl lg:text-2xl mt-1'>{scores.x}</div>
         </div>
-        <div className='flex-1 bg-[#a8bfc9] rounded-xl py-2 text-center text-[#1a2a33] font-bold'>
+        <div className='flex-1 bg-[#a8bfc9] rounded-lg sm:rounded-xl py-2 sm:py-3 text-center text-[#1a2a33] font-bold text-xs sm:text-sm md:text-base'>
           TIES
-          <div className='text-2xl'>{scores.ties}</div>
+          <div className='text-lg sm:text-xl lg:text-2xl mt-1'>
+            {scores.ties}
+          </div>
         </div>
-        <div className='flex-1 bg-[#f2b137] rounded-xl py-2 text-center text-[#1a2a33] font-bold'>
-          {selectedMark === "o" ? "O (YOU)" : "O (CPU)"}
-          <div className='text-2xl'>{scores.o}</div>
+        <div className='flex-1 bg-[#f2b137] rounded-lg sm:rounded-xl py-2 sm:py-3 text-center text-[#1a2a33] font-bold text-xs sm:text-sm md:text-base'>
+          {gameMode === "player"
+            ? selectedMark === "o"
+              ? "O (P1)"
+              : "O (P2)"
+            : selectedMark === "o"
+            ? "O (YOU)"
+            : "O (CPU)"}
+          <div className='text-lg sm:text-xl lg:text-2xl mt-1'>{scores.o}</div>
         </div>
       </div>
+
+      {/* Restart Confirmation Modal */}
+      {showRestartModal && (
+        <>
+          <div className='fixed inset-0 bg-black/60 z-40 pointer-events-none'></div>
+          <div className='fixed inset-0 flex items-center justify-center z-50'>
+            <div className='bg-[#1f3641] rounded-xl p-8 sm:p-12 text-center w-full mx-4 shadow-2xl pointer-events-auto'>
+              <div className='text-[#a8bfc9] text-sm sm:text-2xl md:text-4xl lg:text-5xl font-bold mb-8 sm:mb-10'>
+                RESTART GAME?
+              </div>
+
+              <div className='flex gap-2 sm:gap-3 justify-center'>
+                <button
+                  className='bg-[#a8bfc9] hover:bg-[#c5d2dc] text-[#1a2a33] font-bold py-2 sm:py-3 px-4 sm:px-6 rounded-lg transition-colors text-xs sm:text-sm md:text-base'
+                  onClick={handleRestartCancel}
+                >
+                  NO, CANCEL
+                </button>
+                <button
+                  className='bg-[#f2b137] hover:bg-[#f5c563] text-[#1a2a33] font-bold py-2 sm:py-3 px-4 sm:px-6 rounded-lg transition-colors text-xs sm:text-sm md:text-base'
+                  onClick={handleRestartConfirm}
+                >
+                  YES, RESTART
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Win Modal */}
       {winner && (
         <>
           <div className='fixed inset-0 bg-black/60 z-40 pointer-events-none'></div>
           <div className='fixed inset-0 flex items-center justify-center z-50'>
-            <div className='bg-[#1f3641] rounded-xl p-8 text-center max-w-lg w-full mx-4 shadow-2xl pointer-events-auto'>
+            <div className='bg-[#1f3641] rounded-xl p-8 sm:p-12 text-center w-full mx-4 shadow-2xl pointer-events-auto'>
               {winner === "tie" ? (
                 <>
-                  <div className='text-[#a8bfc9] text-lg font-bold mb-2'>
+                  <div className='text-[#a8bfc9] text-sm sm:text-base md:text-2xl lg:text-3xl font-bold mb-8 sm:mb-10'>
                     ROUND TIED
                   </div>
                 </>
               ) : (
                 <>
-                  <div className='text-[#a8bfc9] text-lg font-bold mb-2'>
-                    {winner === selectedMark
+                  <div className='text-[#a8bfc9] text-sm sm:text-base md:text-lg lg:text-xl font-bold mb-4'>
+                    {gameMode === "player"
+                      ? winner === selectedMark
+                        ? "PLAYER 1 WINS!"
+                        : "PLAYER 2 WINS!"
+                      : winner === selectedMark
                       ? "YOU WON!"
                       : "OH NO, YOU LOST..."}
                   </div>
-                  <div className='flex items-center justify-center gap-2 mb-6'>
+                  <div className='flex items-center justify-center gap-2 mb-8 sm:mb-10'>
                     {winner === "x" ? (
                       <svg
-                        width='32'
-                        height='32'
+                        className='w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 lg:w-12 lg:h-12'
                         viewBox='0 0 64 64'
                         xmlns='http://www.w3.org/2000/svg'
                       >
@@ -351,7 +418,7 @@ export default function GameBoard({ selectedMark, onQuit }) {
                       </svg>
                     )}
                     <span
-                      className={`text-2xl font-bold ${
+                      className={`text-lg sm:text-2xl md:text-4xl lg:text-5xl font-bold ${
                         winner === "x" ? "text-[#31c3bd]" : "text-[#f2b137]"
                       }`}
                     >
@@ -361,15 +428,15 @@ export default function GameBoard({ selectedMark, onQuit }) {
                 </>
               )}
 
-              <div className='flex gap-3'>
+              <div className='flex gap-3 justify-center'>
                 <button
-                  className='flex-1 bg-[#a8bfc9] hover:bg-[#c5d2dc] text-[#1a2a33] font-bold py-3 px-4 rounded-lg transition-colors'
+                  className='bg-[#a8bfc9] hover:bg-[#c5d2dc] text-[#1a2a33] font-bold py-3 px-6 rounded-lg transition-colors text-xs sm:text-sm md:text-base'
                   onClick={onQuit}
                 >
                   QUIT
                 </button>
                 <button
-                  className='flex-1 bg-[#f2b137] hover:bg-[#f5c563] text-[#1a2a33] font-bold py-3 px-4 rounded-lg transition-colors'
+                  className='bg-[#f2b137] hover:bg-[#f5c563] text-[#1a2a33] font-bold py-3 px-6 rounded-lg transition-colors text-xs sm:text-sm md:text-base'
                   onClick={resetGame}
                 >
                   NEXT ROUND

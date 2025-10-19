@@ -1,20 +1,19 @@
 export default function MarkSelector({ selected, setSelected }) {
   return (
-    <div className='bg-[#1f3641] rounded-2xl p-6 shadow-[0_8px_0_#10212a]'>
-      <h2 className='text-[#a8bfc9] text-center mb-6'>
+    <div className='bg-[#1f3641] rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-[0_6px_0_#10212a] sm:shadow-[0_8px_0_#10212a]'>
+      <h2 className='text-[#a8bfc9] text-center mb-4 sm:mb-6 text-sm sm:text-base font-bold'>
         PICK PLAYER 1'S MARK
       </h2>
-      <div className='bg-[#1a2a33] rounded-lg p-2 flex mb-4'>
+      <div className='bg-[#1a2a33] rounded-lg p-2 flex mb-3 sm:mb-4'>
         <button
-          className={`flex-1 rounded-lg p-3 flex items-center justify-center cursor-pointer transition-colors ${
+          className={`flex-1 rounded-lg p-2 sm:p-3 flex items-center justify-center cursor-pointer transition-colors ${
             selected === "x" ? "bg-[#a8bfc9]" : "bg-transparent"
           }`}
           onClick={() => setSelected("x")}
           aria-pressed={selected === "x"}
         >
           <svg
-            width='32'
-            height='32'
+            className='w-6 h-6 sm:w-8 sm:h-8'
             viewBox='0 0 64 64'
             xmlns='http://www.w3.org/2000/svg'
           >
@@ -26,15 +25,14 @@ export default function MarkSelector({ selected, setSelected }) {
           </svg>
         </button>
         <button
-          className={`flex-1 rounded-lg p-3 flex items-center justify-center cursor-pointer transition-colors ${
+          className={`flex-1 rounded-lg p-2 sm:p-3 flex items-center justify-center cursor-pointer transition-colors ${
             selected === "o" ? "bg-[#a8bfc9]" : "bg-transparent"
           }`}
           onClick={() => setSelected("o")}
           aria-pressed={selected === "o"}
         >
           <svg
-            width='32'
-            height='32'
+            className='w-6 h-6 sm:w-8 sm:h-8'
             viewBox='0 0 64 64'
             xmlns='http://www.w3.org/2000/svg'
           >
@@ -45,7 +43,7 @@ export default function MarkSelector({ selected, setSelected }) {
           </svg>
         </button>
       </div>
-      <p className='text-[#a8bfc9] opacity-50 text-center text-sm'>
+      <p className='text-[#a8bfc9] opacity-50 text-center text-xs sm:text-sm'>
         REMEMBER: X GOES FIRST
       </p>
     </div>
