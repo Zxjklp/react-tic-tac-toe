@@ -1,25 +1,25 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 export default function GameBoard({ selectedMark, onQuit }) {
   const [board, setBoard] = useState(Array(9).fill(null));
-  const [currentPlayer, setCurrentPlayer] = useState(selectedMark);
+  const [currentPlayer, setCurrentPlayer] = useState("x"); // X always starts first
   const [isGameActive, setIsGameActive] = useState(true);
   const [winner, setWinner] = useState(null);
   const [winningLine, setWinningLine] = useState([]);
   const [scores, setScores] = useState({ x: 0, o: 0, ties: 0 });
 
-  const winningPatterns = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8], // Rows
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8], // Columns
-    [0, 4, 8],
-    [2, 4, 6], // Diagonals
-  ];
+  const checkWinner = useCallback((boardState) => {
+    const winningPatterns = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8], // Rows
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8], // Columns
+      [0, 4, 8],
+      [2, 4, 6], // Diagonals
+    ];
 
-  const checkWinner = (boardState) => {
     for (let pattern of winningPatterns) {
       const [a, b, c] = pattern;
       if (
@@ -34,10 +34,17 @@ export default function GameBoard({ selectedMark, onQuit }) {
       return { winner: "tie", line: [] };
     }
     return null;
-  };
+  }, []);
 
   const handleCellClick = (index) => {
-    if (board[index] || !isGameActive || winner) return;
+    // Only allow player moves when it's their turn
+    if (
+      board[index] ||
+      !isGameActive ||
+      winner ||
+      currentPlayer !== selectedMark
+    )
+      return;
 
     const newBoard = [...board];
     newBoard[index] = currentPlayer;
@@ -59,18 +66,105 @@ export default function GameBoard({ selectedMark, onQuit }) {
         }));
       }
     } else {
-      // Switch turns
+      // Switch turns between X and O
       setCurrentPlayer(currentPlayer === "x" ? "o" : "x");
     }
   };
 
   const resetGame = () => {
     setBoard(Array(9).fill(null));
-    setCurrentPlayer(selectedMark);
+    setCurrentPlayer("x"); // X always starts first
     setIsGameActive(true);
     setWinner(null);
     setWinningLine([]);
   };
+
+  // CPU turn effect
+  useEffect(() => {
+    const cpuMark = selectedMark === "x" ? "o" : "x";
+
+    if (currentPlayer === cpuMark && isGameActive && !winner) {
+      // CPU move logic
+      const makeCpuMove = (boardState) => {
+        const playerMark = selectedMark;
+
+        // Check if CPU can win
+        for (let i = 0; i < 9; i++) {
+          if (!boardState[i]) {
+            const testBoard = [...boardState];
+            testBoard[i] = cpuMark;
+            if (checkWinner(testBoard)?.winner === cpuMark) {
+              return i;
+            }
+          }
+        }
+
+        // Check if CPU needs to block player from winning
+        for (let i = 0; i < 9; i++) {
+          if (!boardState[i]) {
+            const testBoard = [...boardState];
+            testBoard[i] = playerMark;
+            if (checkWinner(testBoard)?.winner === playerMark) {
+              return i;
+            }
+          }
+        }
+
+        // Take center if available
+        if (!boardState[4]) {
+          return 4;
+        }
+
+        // Take corners
+        const corners = [0, 2, 6, 8];
+        const availableCorners = corners.filter((i) => !boardState[i]);
+        if (availableCorners.length > 0) {
+          return availableCorners[
+            Math.floor(Math.random() * availableCorners.length)
+          ];
+        }
+
+        // Take any available spot
+        const availableSpots = boardState
+          .map((spot, index) => (spot === null ? index : null))
+          .filter((spot) => spot !== null);
+        return availableSpots[
+          Math.floor(Math.random() * availableSpots.length)
+        ];
+      };
+
+      const timer = setTimeout(() => {
+        const cpuMove = makeCpuMove(board);
+        if (cpuMove !== undefined) {
+          const newBoard = [...board];
+          newBoard[cpuMove] = cpuMark;
+          setBoard(newBoard);
+
+          const result = checkWinner(newBoard);
+          if (result) {
+            setWinner(result.winner);
+            setWinningLine(result.line);
+            setIsGameActive(false);
+
+            // Update scores
+            if (result.winner === "tie") {
+              setScores((prev) => ({ ...prev, ties: prev.ties + 1 }));
+            } else {
+              setScores((prev) => ({
+                ...prev,
+                [result.winner]: prev[result.winner] + 1,
+              }));
+            }
+          } else {
+            // Switch turns between X and O
+            setCurrentPlayer(cpuMark === "x" ? "o" : "x");
+          }
+        }
+      }, 1000); // 1 second delay for CPU move
+
+      return () => clearTimeout(timer);
+    }
+  }, [currentPlayer, board, isGameActive, winner, selectedMark, checkWinner]);
 
   const renderCellContent = (cellValue, isWinning = false) => {
     if (!cellValue) return null;
@@ -157,7 +251,10 @@ export default function GameBoard({ selectedMark, onQuit }) {
           </div>
         </div>
         <div className='flex justify-end'>
-          <button className='bg-[#a8bfc9] rounded-lg p-2.5 flex items-center justify-center cursor-pointer shadow-[0_4px_0_#6d8b99]'>
+          <button
+            className='bg-[#a8bfc9] rounded-lg p-2.5 flex items-center justify-center cursor-pointer shadow-[0_4px_0_#6d8b99] hover:bg-[#c5d2dc] transition-colors'
+            onClick={onQuit}
+          >
             <svg width='20' height='20' xmlns='http://www.w3.org/2000/svg'>
               <path
                 d='M19.524 0h-1.88a.476.476 0 0 0-.476.499l.159 3.284A9.81 9.81 0 0 0 9.835.317C4.415.317-.004 4.743 0 10.167.004 15.597 4.406 20 9.835 20a9.796 9.796 0 0 0 6.59-2.536.476.476 0 0 0 .019-.692l-1.348-1.349a.476.476 0 0 0-.65-.022 6.976 6.976 0 0 1-9.85-.63 6.987 6.987 0 0 1 .63-9.857 6.976 6.976 0 0 1 10.403 1.348l-4.027-.193a.476.476 0 0 0-.498.476v1.881c0 .263.213.476.476.476h7.944A.476.476 0 0 0 20 8.426V.476A.476.476 0 0 0 19.524 0Z'
@@ -194,7 +291,7 @@ export default function GameBoard({ selectedMark, onQuit }) {
       {/* Score row */}
       <div className='flex w-full gap-4 mt-6'>
         <div className='flex-1 bg-[#31c3bd] rounded-xl py-2 text-center text-[#1a2a33] font-bold'>
-          X (YOU)
+          {selectedMark === "x" ? "X (YOU)" : "X (CPU)"}
           <div className='text-2xl'>{scores.x}</div>
         </div>
         <div className='flex-1 bg-[#a8bfc9] rounded-xl py-2 text-center text-[#1a2a33] font-bold'>
@@ -202,7 +299,7 @@ export default function GameBoard({ selectedMark, onQuit }) {
           <div className='text-2xl'>{scores.ties}</div>
         </div>
         <div className='flex-1 bg-[#f2b137] rounded-xl py-2 text-center text-[#1a2a33] font-bold'>
-          O (CPU)
+          {selectedMark === "o" ? "O (YOU)" : "O (CPU)"}
           <div className='text-2xl'>{scores.o}</div>
         </div>
       </div>
