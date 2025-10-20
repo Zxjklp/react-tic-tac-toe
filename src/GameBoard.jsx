@@ -265,7 +265,7 @@ export default function GameBoard({ selectedMark, gameMode, onQuit }) {
       <div className='grid grid-cols-3 w-full mb-2 sm:mb-4 items-center'>
         <div className='flex justify-start'>
           <img
-            src='/src/assets/logo.svg'
+            src='/logo.svg'
             alt='Tic-tac-toe game logo featuring X and O symbols in a playful design'
             className='w-12 h-5 sm:w-16 md:w-18 lg:w-[72px] lg:h-8'
           />
