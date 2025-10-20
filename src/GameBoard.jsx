@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import logoSvg from "/src/assets/logo.svg";
 
 export default function GameBoard({ selectedMark, gameMode, onQuit }) {
   const [board, setBoard] = useState(Array(9).fill(null));
@@ -265,7 +266,7 @@ export default function GameBoard({ selectedMark, gameMode, onQuit }) {
       <div className='grid grid-cols-3 w-full mb-2 sm:mb-4 items-center'>
         <div className='flex justify-start'>
           <img
-            src='/logo.svg'
+            src={logoSvg}
             alt='Tic-tac-toe game logo featuring X and O symbols in a playful design'
             className='w-12 h-5 sm:w-16 md:w-18 lg:w-[72px] lg:h-8'
           />
