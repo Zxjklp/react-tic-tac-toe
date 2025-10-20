@@ -304,6 +304,7 @@ export default function GameBoard({ selectedMark, gameMode, onQuit }) {
           <button
             className='bg-[#a8bfc9] rounded-lg p-2 sm:p-2.5 flex items-center justify-center cursor-pointer shadow-[0_4px_0_#6d8b99] hover:bg-[#c5d2dc] transition-colors'
             onClick={handleRestartClick}
+            aria-label='Restart game'
           >
             <svg
               className='w-4 h-4 sm:w-5 sm:h-5'
@@ -330,15 +331,19 @@ export default function GameBoard({ selectedMark, gameMode, onQuit }) {
               : "bg-[#1f3641]";
 
           return (
-            <div
+            <button
               key={i}
               className={`${
                 isWinningCell ? winningCellBg : "bg-[#1f3641]"
-              } rounded-xl aspect-square flex items-center justify-center shadow-[0_8px_0_#10212a] cursor-pointer hover:bg-[#2a4a56] transition-colors relative group`}
+              } rounded-xl aspect-square flex items-center justify-center shadow-[0_8px_0_#10212a] cursor-pointer hover:bg-[#2a4a56] transition-colors relative group border-0`}
               onClick={() => handleCellClick(i)}
+              aria-label={`Game cell ${i + 1}${
+                cellValue ? `, contains ${cellValue.toUpperCase()}` : ", empty"
+              }`}
+              disabled={!!cellValue || !isGameActive || !!winner}
             >
               {renderCellContent(cellValue, isWinningCell)}
-            </div>
+            </button>
           );
         })}
       </div>
