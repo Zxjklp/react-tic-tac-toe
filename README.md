@@ -6,7 +6,7 @@ This is a solution to the [Tic Tac Toe challenge on Frontend Mentor](https://www
 
 - [Overview](#overview)
   - [The challenge](#the-challenge)
-  - [Screenshot](#screenshot)
+  - [Gameplay Demo](#gameplay-demo)
   - [Links](#links)
 - [My process](#my-process)
   - [Built with](#built-with)
@@ -22,7 +22,7 @@ Users should be able to:
 - See hover states for all interactive elements on the page
 - Play the game either solo vs the computer or multiplayer against another person
 
-#### Gameplay Demo
+### Gameplay Demo
 
 ![Gameplay Demo](./gameplay/gameplay-demo.gif)
 
