@@ -4,12 +4,14 @@ export default function NewGameButtons({ onStartCpuGame, onStartPlayerGame }) {
       <button
         onClick={onStartCpuGame}
         className='w-full py-3 sm:py-4 rounded-xl sm:rounded-2xl font-bold uppercase bg-[#f2b137] hover:bg-[#f5c563] text-[#1a2a33] shadow-[0_6px_0_#cc8b13] sm:shadow-[0_8px_0_#cc8b13] cursor-pointer transition-colors duration-200 text-sm sm:text-base'
+        aria-label='Start new game against computer'
       >
         NEW GAME (VS CPU)
       </button>
       <button
         onClick={onStartPlayerGame}
         className='w-full py-3 sm:py-4 rounded-xl sm:rounded-2xl font-bold uppercase bg-[#31c3bd] hover:bg-[#52d4ce] text-[#1a2a33] shadow-[0_6px_0_#118c87] sm:shadow-[0_8px_0_#118c87] cursor-pointer transition-colors duration-200 text-sm sm:text-base'
+        aria-label='Start new game against another player'
       >
         NEW GAME (VS PLAYER)
       </button>

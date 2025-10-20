@@ -11,6 +11,7 @@ export default function MarkSelector({ selected, setSelected }) {
           }`}
           onClick={() => setSelected("x")}
           aria-pressed={selected === "x"}
+          aria-label='Select X mark for Player 1'
         >
           <svg
             className='w-6 h-6 sm:w-8 sm:h-8'
@@ -30,6 +31,7 @@ export default function MarkSelector({ selected, setSelected }) {
           }`}
           onClick={() => setSelected("o")}
           aria-pressed={selected === "o"}
+          aria-label='Select O mark for Player 1'
         >
           <svg
             className='w-6 h-6 sm:w-8 sm:h-8'
