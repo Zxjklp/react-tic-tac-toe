@@ -1,7 +1,7 @@
 export default function MarkSelector({ selected, setSelected }) {
   return (
     <div className='bg-[#1f3641] rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-[0_6px_0_#10212a] sm:shadow-[0_8px_0_#10212a]'>
-      <h2 className='text-[#a8bfc9] text-center mb-4 sm:mb-6 text-sm sm:text-base font-bold'>
+      <h2 className='text-[#c7d2fe] text-center mb-4 sm:mb-6 text-sm sm:text-base font-bold'>
         PICK PLAYER 1'S MARK
       </h2>
       <div className='bg-[#1a2a33] rounded-lg p-2 flex mb-3 sm:mb-4'>
@@ -45,7 +45,7 @@ export default function MarkSelector({ selected, setSelected }) {
           </svg>
         </button>
       </div>
-      <p className='text-[#a8bfc9] opacity-50 text-center text-xs sm:text-sm'>
+      <p className='text-[#9ca3af] text-center text-xs sm:text-sm'>
         REMEMBER: X GOES FIRST
       </p>
     </div>
