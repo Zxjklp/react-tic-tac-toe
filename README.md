@@ -22,13 +22,7 @@ Users should be able to:
 - See hover states for all interactive elements on the page
 - Play the game either solo vs the computer or multiplayer against another person
 
-### Screenshot
-
-![Desktop Screenshot](./screenshots/desktop-screenshot.png)
-
-#### Gameplay Demo
-
-![Gameplay Demo](./screenshots/gameplay-demo.gif)
+![Gameplay Demo](./gameplay/gameplay-demo.gif)
 
 ### Links
 
