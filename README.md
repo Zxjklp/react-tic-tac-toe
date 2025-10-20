@@ -24,8 +24,8 @@ Users should be able to:
 
 ### Links
 
-- Solution URL: [GitHub Repository](https://github.com/Zxjklp/react-tic-tac-toe)
-- Live Site URL: [Live Demo](https://zxjklp.github.io/react-tic-tac-toe)
+- Solution URL: [https://github.com/Zxjklp/react-tic-tac-toe](https://github.com/Zxjklp/react-tic-tac-toe)
+- Live Site URL: [https://zxjklp.github.io/react-tic-tac-toe](https://zxjklp.github.io/react-tic-tac-toe)
 
 ## My process
 
