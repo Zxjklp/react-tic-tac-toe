@@ -22,6 +22,8 @@ Users should be able to:
 - See hover states for all interactive elements on the page
 - Play the game either solo vs the computer or multiplayer against another person
 
+#### Gameplay Demo
+
 ![Gameplay Demo](./gameplay/gameplay-demo.gif)
 
 ### Links
