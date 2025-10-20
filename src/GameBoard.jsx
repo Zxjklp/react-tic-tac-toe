@@ -268,7 +268,7 @@ export default function GameBoard({ selectedMark, gameMode, onQuit }) {
           <img
             src={logoSvg}
             alt='Tic-tac-toe game logo featuring X and O symbols in a playful design'
-            className='w-12 h-5 sm:w-16 md:w-18 lg:w-[72px] lg:h-8'
+            className='h-5 sm:h-6 md:h-7 lg:h-8 w-auto object-contain'
           />
         </div>
         <div className='flex justify-center'>
