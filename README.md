@@ -30,16 +30,9 @@ Users should be able to:
 
 ![Gameplay Demo](./screenshots/gameplay-demo.gif)
 
-#### Mobile & Desktop Views
-
-<div align="center">
-  <img src="./screenshots/mobile-screenshot.png" alt="Mobile View" width="300">
-  <img src="./screenshots/desktop-screenshot.png" alt="Desktop View" width="500">
-</div>
-
 ### Links
 
-- Solution URL: [https://github.com/Zxjklp/react-tic-tac-toe](https://github.com/Zxjklp/react-tic-tac-toe)
+- Solution URL: [https://www.frontendmentor.io/solutions/react-and-tailwind-tic-tac-toe-game-1ik0J3j_eW](https://www.frontendmentor.io/solutions/react-and-tailwind-tic-tac-toe-game-1ik0J3j_eW)
 - Live Site URL: [https://zxjklp.github.io/react-tic-tac-toe](https://zxjklp.github.io/react-tic-tac-toe)
 
 ## My process
