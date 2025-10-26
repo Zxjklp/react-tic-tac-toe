@@ -5,7 +5,7 @@ import GameBoard from "./GameBoard";
 import { useState } from "react";
 
 export default function App() {
-  const [showBoard, setShowBoard] = useState(false);
+  const [showBoard, setShowBoard] = useState(true);
   const [selectedMark, setSelectedMark] = useState("x");
   const [gameMode, setGameMode] = useState("cpu"); // "cpu" or "player"
   const handleStartCpuGame = () => {
